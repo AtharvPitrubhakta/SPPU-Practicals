@@ -1,0 +1,39 @@
+create table borrower(rollno number(10),name varchar2(10),date_of_isuue date,nameofbook varchar2(20),status varchar2(5));
+
+create table fine(rollno number(10),date1 date,amount number(10));
+
+insert into borrower values(1,'pratiksha','10-MAR-2017','TOC','I');
+
+insert into borrower values(2,'niraj','01-FEB-2017','DBMS','I');
+
+insert into borrower values(3,'nirmal','01-FEB-2017','DBMS','R');
+
+declare
+rno number(3):=&rno;
+bname varchar2(30):='&bname';
+no_of_days number(5);
+issue_date date;
+famnt number:=0;
+
+begin
+select date_of_isuue into issue_date from borrower where rollno=rno;
+select sysdate-to_date(issue_date) days into no_of_days from dual;
+
+if (no_of_days>15 and no_of_days<30) THEN
+famnt:=no_of_days*5;
+
+elsif no_of_days>30 THEN
+famnt:=15*5+(no_of_days-30)*50;
+end if;
+
+update borrower set status='R' where rollno=rno;
+
+if (famnt>0) then
+insert into fine values(rno,sysdate,famnt);
+end if;
+
+exception
+when no_data_found then
+dbms_output.put_line('Record not found');
+end; 
+/
